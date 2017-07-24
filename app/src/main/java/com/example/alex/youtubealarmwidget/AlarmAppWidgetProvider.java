@@ -10,11 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.SystemClock;
-import android.text.Layout;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.RemoteViews;
 
 
@@ -134,9 +130,6 @@ public class AlarmAppWidgetProvider extends AppWidgetProvider {
         paint.setTextSize(250);
 
         paint.setTextAlign(Paint.Align.CENTER);
-
-      //  cnvText.drawCircle(125, 125, 125, paint);
-
 
         cnvText.drawText(text, 250, 210, paint);
         return btmText;
