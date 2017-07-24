@@ -1,0 +1,8 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">YoutubeAlarmWidget</string>
+    <string name="widget_button_text">Click Me!</string>
+    <string name="save_button_text">Save</string>
+    <string name="widget_default_textview_text">I am a textview</string>
+    <string name="appwidget_text_format"><xliff:g id="prefix">%1$s</xliff:g>: <xliff:g id="time">%2$s</xliff:g></string>
+    <string name="appwidget_prefix_default">Oh hai</string>
+</resources>
