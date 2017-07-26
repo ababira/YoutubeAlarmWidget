@@ -15,6 +15,8 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 
 public class AlarmAppWidgetProvider extends AppWidgetProvider {
@@ -40,6 +42,27 @@ public class AlarmAppWidgetProvider extends AppWidgetProvider {
     public static String DOWN_ACTION_HRS = "DownActionHrs";
 
 
+    public static String ADD_MINS_TO_ALARM = "AddMinsToAlarm";
+    public static String ADD_HRS_TO_ALARM = "AddHoursToAlarm";
+
+    public static String ROUND_TO_10_ALARM = "RoundTo10Alarm";
+    public static String ROUND_TO_30_ALARM = "RoundTo30Alarm";
+    public static String ROUND_TO_60_ALARM = "RoundTo60Alarm";
+
+    public static String CANCEL_ALARM = "CancelAlarm";
+
+
+    private static final String CLOCK_FORMAT = "HH:mm";
+
+
+    private static String DEFAULT_ALARM_STRING = "--:--";
+
+    private static Calendar _CurrentAlarmTime;
+
+    //TODO: take this initialization out
+    private static boolean _IsAlarmSet = false;
+
+
     //TODO  REMOVE THESE VARIABLES TO USE INTENTS
     private static int _MinsCounter = 5;
     private static int _HrsCounter = 1;
@@ -62,10 +85,9 @@ public class AlarmAppWidgetProvider extends AppWidgetProvider {
             Log.d(TAG, "updatating app widget " + appWidgetId);
             String titlePrefix = AlarmAppWidgetConfigure.loadTitlePref(context, appWidgetId);
 
-            views.setImageViewBitmap(R.id.appwidget_image1, convertToImg("2312", context));
-            views.setImageViewBitmap(R.id.appwidget_image2, convertToImg("52", context));
-            views.setImageViewBitmap(R.id.appwidget_image3, convertToImg(String.valueOf(_MinsCounter), context));
-            views.setImageViewBitmap(R.id.appwidget_image4, convertToImg("34", context));
+            views.setImageViewBitmap(R.id.appwidget_image1, convertToImg(DEFAULT_ALARM_STRING, context));
+            views.setTextViewText(R.id.appwidget_text_minutes, String.valueOf(_MinsCounter));
+            views.setTextViewText(R.id.appwidget_text_hours, String.valueOf(_HrsCounter));
 
 
             //TODO Try and add these to the onEnabled method
@@ -83,6 +105,25 @@ public class AlarmAppWidgetProvider extends AppWidgetProvider {
 
             PendingIntent intentUpActionHrs = getPendingSelfIntent(context, UP_ACTION_HRS);
             views.setOnClickPendingIntent(R.id.appwidget_text3, intentUpActionHrs);
+
+
+            PendingIntent incrementAlarmByMins = getPendingSelfIntent(context, ADD_MINS_TO_ALARM);
+            views.setOnClickPendingIntent(R.id.appwidget_text_minutes, incrementAlarmByMins);
+
+            PendingIntent incrementAlarmByHours = getPendingSelfIntent(context, ADD_HRS_TO_ALARM);
+            views.setOnClickPendingIntent(R.id.appwidget_text_hours, incrementAlarmByHours);
+
+            PendingIntent intentCancelAlarm = getPendingSelfIntent(context, CANCEL_ALARM);
+            views.setOnClickPendingIntent(R.id.appwidget_text_cancel, intentCancelAlarm);
+
+            PendingIntent intentRoundTo10Alarm = getPendingSelfIntent(context, ROUND_TO_10_ALARM);
+            views.setOnClickPendingIntent(R.id.button_round_10, intentRoundTo10Alarm);
+
+            PendingIntent intentRoundTo30Alarm = getPendingSelfIntent(context, ROUND_TO_30_ALARM);
+            views.setOnClickPendingIntent(R.id.button_round_30, intentRoundTo30Alarm);
+
+            PendingIntent intentRoundTo60Alarm = getPendingSelfIntent(context, ROUND_TO_60_ALARM);
+            views.setOnClickPendingIntent(R.id.button_round_60, intentRoundTo60Alarm);
 
 
         }
@@ -186,24 +227,78 @@ public class AlarmAppWidgetProvider extends AppWidgetProvider {
 
         if (UP_ACTION_MINS.equals(intent.getAction())) {
             _MinsCounter++;
-            views.setImageViewBitmap(R.id.appwidget_image3, convertToImg(String.valueOf(_MinsCounter), context));
+            views.setTextViewText(R.id.appwidget_text_minutes, String.valueOf(_MinsCounter));
         }
         if (DOWN_ACTION_MINS.equals(intent.getAction())) {
             _MinsCounter--;
-            views.setImageViewBitmap(R.id.appwidget_image3, convertToImg(String.valueOf(_MinsCounter), context));
+            views.setTextViewText(R.id.appwidget_text_minutes, String.valueOf(_MinsCounter));
         }
         if (UP_ACTION_HRS.equals(intent.getAction())) {
             _HrsCounter++;
-            views.setImageViewBitmap(R.id.appwidget_image4, convertToImg(String.valueOf(_HrsCounter), context));
+            views.setTextViewText(R.id.appwidget_text_hours, String.valueOf(_HrsCounter));
         }
         if (DOWN_ACTION_HRS.equals(intent.getAction())) {
             _HrsCounter--;
-            views.setImageViewBitmap(R.id.appwidget_image4, convertToImg(String.valueOf(_HrsCounter), context));
+            views.setTextViewText(R.id.appwidget_text_hours, String.valueOf(_HrsCounter));
+        }
+        if (ADD_MINS_TO_ALARM.equals(intent.getAction())) {
+
+            if (!_IsAlarmSet) {
+                _CurrentAlarmTime = Calendar.getInstance();
+                _IsAlarmSet = true;
+            }
+
+            views.setImageViewBitmap(R.id.appwidget_image1, convertToImg(addMinutesToCurrentTime(_MinsCounter), context));
+        }
+        if (ADD_HRS_TO_ALARM.equals(intent.getAction())) {
+
+            if (!_IsAlarmSet) {
+                _CurrentAlarmTime = Calendar.getInstance();
+                _IsAlarmSet = true;
+            }
+
+            views.setImageViewBitmap(R.id.appwidget_image1, convertToImg(addHoursToCurrentTime(_HrsCounter), context));
+        }
+        if (ROUND_TO_10_ALARM.equals(intent.getAction())) {
+
+            if (!_IsAlarmSet) {
+                _CurrentAlarmTime = Calendar.getInstance();
+                _IsAlarmSet = true;
+            }
+
+            views.setImageViewBitmap(R.id.appwidget_image1, convertToImg(roundCurrentAlarmTimeToNearest(10), context));
+        }
+        if (ROUND_TO_30_ALARM.equals(intent.getAction())) {
+
+            if (!_IsAlarmSet) {
+                _CurrentAlarmTime = Calendar.getInstance();
+                _IsAlarmSet = true;
+            }
+
+            views.setImageViewBitmap(R.id.appwidget_image1, convertToImg(roundCurrentAlarmTimeToNearest(30), context));
+        }
+        if (ROUND_TO_60_ALARM.equals(intent.getAction())) {
+
+            if (!_IsAlarmSet) {
+                _CurrentAlarmTime = Calendar.getInstance();
+                _IsAlarmSet = true;
+            }
+
+            views.setImageViewBitmap(R.id.appwidget_image1, convertToImg(roundCurrentAlarmTimeToNearest(60), context));
+        }
+
+        if (CANCEL_ALARM.equals(intent.getAction())) {
+
+            if (_IsAlarmSet) {
+                _CurrentAlarmTime = null;
+                _IsAlarmSet = false;
+            }
+
+            views.setImageViewBitmap(R.id.appwidget_image1, convertToImg(DEFAULT_ALARM_STRING, context));
         }
         appWidgetManager.updateAppWidget(new ComponentName(context, AlarmAppWidgetProvider.class), views);
     }
 
-    
 
     protected PendingIntent getPendingSelfIntent(Context context, String action) {
         Intent intent = new Intent(context, getClass());
@@ -211,5 +306,37 @@ public class AlarmAppWidgetProvider extends AppWidgetProvider {
         return PendingIntent.getBroadcast(context, 0, intent, 0);
     }
 
+
+    private String addMinutesToCurrentTime(int minutes) {
+
+        _CurrentAlarmTime.add(Calendar.MINUTE, minutes);
+        SimpleDateFormat sdf = new SimpleDateFormat(CLOCK_FORMAT);
+        return sdf.format(_CurrentAlarmTime.getTime());
+    }
+
+    private String addHoursToCurrentTime(int hours) {
+        _CurrentAlarmTime.add(Calendar.MINUTE, hours * 60);
+        SimpleDateFormat sdf = new SimpleDateFormat(CLOCK_FORMAT);
+        return sdf.format(_CurrentAlarmTime.getTime());
+    }
+
+
+
+    private String roundCurrentAlarmTimeToNearest(int x) {
+
+        //TODO comment for users
+        /*
+            Rounds to the next "x" or to the closest "x"
+         */
+
+        int minutesToAdd = x - _CurrentAlarmTime.get(Calendar.MINUTE) % x;
+
+
+        _CurrentAlarmTime.add(Calendar.MINUTE, minutesToAdd);
+
+        SimpleDateFormat sdf = new SimpleDateFormat(CLOCK_FORMAT);
+        return sdf.format(_CurrentAlarmTime.getTime());
+
+    }
 
 }

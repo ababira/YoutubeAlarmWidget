@@ -8,7 +8,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
+        android:baselineAligned="false"
         android:orientation="horizontal">
 
 
@@ -20,7 +20,7 @@
 
             <ImageView
                 android:id="@+id/appwidget_image1"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_gravity="center"
                 android:layout_weight="2"
@@ -29,14 +29,16 @@
 
                 />
 
-            <ImageView
-                android:id="@+id/appwidget_image2"
-                android:layout_width="wrap_content"
+
+            <TextView
+                android:id="@+id/appwidget_text_cancel"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_gravity="center"
                 android:layout_weight="1"
-                android:background="@drawable/widget_imageview_background"
-                android:src="@mipmap/ic_launcher" />
+                android:background="#FF0000"
+                android:gravity="center"
+                android:text="Cancel"
+                android:textColor="#FFFFFF" />
 
 
         </LinearLayout>
@@ -51,7 +53,7 @@
             >
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/button_round_10"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="24"
@@ -75,14 +77,18 @@
                     android:text="▲" />
 
 
-                <ImageView
-                    android:id="@+id/appwidget_image3"
+                <TextView
+                    android:id="@+id/appwidget_text_minutes"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_gravity="center"
                     android:layout_weight="27.5"
                     android:background="@drawable/widget_imageview_background"
-                    android:src="@mipmap/ic_launcher" />
+                    android:gravity="center"
+                    android:text="1"
+                    android:textColor="#ffffff"
+
+                    />
+
 
                 <TextView
                     android:id="@+id/appwidget_text2"
@@ -98,7 +104,7 @@
 
 
             <Button
-                android:id="@+id/button1"
+                android:id="@+id/button_round_30"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="24"
@@ -122,14 +128,17 @@
                     android:text="▲" />
 
 
-                <ImageView
-                    android:id="@+id/appwidget_image4"
+                <TextView
+                    android:id="@+id/appwidget_text_hours"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_gravity="center"
                     android:layout_weight="27.5"
                     android:background="@drawable/widget_imageview_background"
-                    android:src="@mipmap/ic_launcher" />
+                    android:gravity="center"
+                    android:text="1"
+                    android:textColor="#ffffff"
+
+                    />
 
 
                 <TextView
@@ -146,44 +155,13 @@
 
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/button_round_60"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="24"
                 android:text="b3" />
 
         </LinearLayout>
-
-        <!--
-
-                <Button
-                    android:id="@+id/button"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:text="@string/widget_button_text" />
-        -->
-
-
-        <!--   <TextView
-               android:id="@+id/appwidget_text1"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:text="@string/widget_default_textview_text"
-
-               />
-
-           <TextView
-               android:id="@+id/appwidget_text2"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:text="@string/widget_default_textview_text" />
-
-           <TextView
-               android:id="@+id/appwidget_text3"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:text="@string/widget_default_textview_text" />
-   -->
 
 
     </LinearLayout>
