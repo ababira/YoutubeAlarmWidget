@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.SystemClock;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -67,7 +68,6 @@ public class AlarmAppWidgetProvider extends AppWidgetProvider {
     //TODO  REMOVE THESE VARIABLES TO USE INTENTS
     private static int _MinsCounter = 5;
     private static int _HrsCounter = 1;
-
 
 
     @Override
@@ -253,7 +253,7 @@ public class AlarmAppWidgetProvider extends AppWidgetProvider {
             }
 
             views.setImageViewBitmap(R.id.appwidget_image1, convertToImg(addMinutesToCurrentTime(_MinsCounter), context));
-            setAlarm( context);
+            setAlarm(context);
         }
         if (ADD_HRS_TO_ALARM.equals(intent.getAction())) {
 
@@ -295,9 +295,9 @@ public class AlarmAppWidgetProvider extends AppWidgetProvider {
         if (CANCEL_ALARM.equals(intent.getAction())) {
 
             if (_IsAlarmSet) {
-                _CurrentAlarmTime = null;
-                _IsAlarmSet = false;
+              cancelAlarm(context);
             }
+
 
             views.setImageViewBitmap(R.id.appwidget_image1, convertToImg(DEFAULT_ALARM_STRING, context));
 
@@ -306,22 +306,36 @@ public class AlarmAppWidgetProvider extends AppWidgetProvider {
     }
 
 
-
-    protected void setAlarm(Context context) {
+    private void setAlarm(Context context) {
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+       
+        //TODO: test with SDK v 19
+        if (Build.VERSION.SDK_INT >= 21) {
+            //TODO set the pending intent here to use the configration class;
+            AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.AlarmClockInfo(_CurrentAlarmTime.getTimeInMillis(), PendingIntent.getActivity(context, 1, new Intent(context, MainActivity.class), 0));
+            alarmManager.setAlarmClock(alarmClockInfo, getAlarmPendingIntent(context));
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= 19) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, _CurrentAlarmTime.getTimeInMillis(), getAlarmPendingIntent(context));
+            return;
+        }
 
+    }
+
+    private void cancelAlarm(Context context){
+        _CurrentAlarmTime = null;
+        _IsAlarmSet = false;
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(getAlarmPendingIntent(context));
+    }
+
+
+    private PendingIntent getAlarmPendingIntent(Context context) {
         Intent myIntent = new Intent(context, AlarmBroadcastReceiver.class);
         myIntent.putExtra("extra", "yes");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-    //    alarmManager.setExact(AlarmManager.RTC_WAKEUP, _CurrentAlarmTime.getTimeInMillis(), pendingIntent);
-
-        AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.AlarmClockInfo(_CurrentAlarmTime.getTimeInMillis(), PendingIntent.getActivity(context, 1, new Intent(context, MainActivity.class), 0));
-
-        alarmManager.setAlarmClock(alarmClockInfo, pendingIntent);
-
-
-
+        return PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
 
