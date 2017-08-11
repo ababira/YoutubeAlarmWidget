@@ -1,5 +1,6 @@
 package com.example.alex.youtubealarmwidget;
 
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -66,6 +67,7 @@ public class AlarmAppWidgetProvider extends AppWidgetProvider {
     //TODO  REMOVE THESE VARIABLES TO USE INTENTS
     private static int _MinsCounter = 5;
     private static int _HrsCounter = 1;
+
 
 
     @Override
@@ -191,7 +193,7 @@ public class AlarmAppWidgetProvider extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.app_widget);
 
         // TODO uncooment this to add functionality
-        //views.setTextViewText(R.id.appwidget_text1, text);
+        views.setTextViewText(R.id.appwidget_text_cancel, "Just Ran Alarm");
 
         // Tell the widget manager
         appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -225,6 +227,7 @@ public class AlarmAppWidgetProvider extends AppWidgetProvider {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.app_widget);
 
+
         if (UP_ACTION_MINS.equals(intent.getAction())) {
             _MinsCounter++;
             views.setTextViewText(R.id.appwidget_text_minutes, String.valueOf(_MinsCounter));
@@ -245,10 +248,12 @@ public class AlarmAppWidgetProvider extends AppWidgetProvider {
 
             if (!_IsAlarmSet) {
                 _CurrentAlarmTime = Calendar.getInstance();
+                _CurrentAlarmTime.set(Calendar.SECOND, 0);
                 _IsAlarmSet = true;
             }
 
             views.setImageViewBitmap(R.id.appwidget_image1, convertToImg(addMinutesToCurrentTime(_MinsCounter), context));
+            setAlarm( context);
         }
         if (ADD_HRS_TO_ALARM.equals(intent.getAction())) {
 
@@ -295,8 +300,28 @@ public class AlarmAppWidgetProvider extends AppWidgetProvider {
             }
 
             views.setImageViewBitmap(R.id.appwidget_image1, convertToImg(DEFAULT_ALARM_STRING, context));
+
         }
         appWidgetManager.updateAppWidget(new ComponentName(context, AlarmAppWidgetProvider.class), views);
+    }
+
+
+
+    protected void setAlarm(Context context) {
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        Intent myIntent = new Intent(context, AlarmBroadcastReceiver.class);
+        myIntent.putExtra("extra", "yes");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+    //    alarmManager.setExact(AlarmManager.RTC_WAKEUP, _CurrentAlarmTime.getTimeInMillis(), pendingIntent);
+
+        AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.AlarmClockInfo(_CurrentAlarmTime.getTimeInMillis(), PendingIntent.getActivity(context, 1, new Intent(context, MainActivity.class), 0));
+
+        alarmManager.setAlarmClock(alarmClockInfo, pendingIntent);
+
+
+
     }
 
 
@@ -319,7 +344,6 @@ public class AlarmAppWidgetProvider extends AppWidgetProvider {
         SimpleDateFormat sdf = new SimpleDateFormat(CLOCK_FORMAT);
         return sdf.format(_CurrentAlarmTime.getTime());
     }
-
 
 
     private String roundCurrentAlarmTimeToNearest(int x) {
