@@ -24,6 +24,9 @@ import java.util.Calendar;
 public class AlarmAppWidgetProvider extends AppWidgetProvider {
 
 
+    /*TODO: Handle the alarms when the time zone changes
+
+     */
 
 
    /*TODO:
@@ -309,7 +312,7 @@ public class AlarmAppWidgetProvider extends AppWidgetProvider {
     private void setAlarm(Context context) {
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-       
+
         //TODO: test with SDK v 19
         if (Build.VERSION.SDK_INT >= 21) {
             //TODO set the pending intent here to use the configration class;
@@ -333,9 +336,10 @@ public class AlarmAppWidgetProvider extends AppWidgetProvider {
 
 
     private PendingIntent getAlarmPendingIntent(Context context) {
-        Intent myIntent = new Intent(context, AlarmBroadcastReceiver.class);
-        myIntent.putExtra("extra", "yes");
-        return PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+       //TODO: check if application is running on the foreground in case any other app is open if other alarm goes off
+        Intent myIntent = new Intent(context, MainActivity.class);
+        myIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP); // You need this if starting
+        return PendingIntent.getActivity(context, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
 

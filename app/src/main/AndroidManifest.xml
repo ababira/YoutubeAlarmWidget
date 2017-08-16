@@ -17,13 +17,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<!--
-        <activity android:name=".AlarmAppWidgetConfigure">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
-            </intent-filter>
-        </activity>
--->
+        <!--
+                <activity android:name=".AlarmAppWidgetConfigure">
+                    <intent-filter>
+                        <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+                    </intent-filter>
+                </activity>
+        -->
 
         <receiver android:name=".AlarmAppWidgetProvider">
             <intent-filter>
@@ -35,19 +35,20 @@
                 android:resource="@xml/widget_provider_info" />
         </receiver>
 
-        <receiver android:name="AlarmBroadcastReceiver" >
+        <receiver android:name="AlarmBroadcastReceiver">
             <!--<intent-filter>
                 <action android:name="android.intent.ACTION_TIMEZONE_CHANGED" />
                 <action android:name="android.intent.ACTION_TIME" />
             </intent-filter>-->
         </receiver>
 
-    <!--    <service android:name="RingtonePlayingService"
-            android:enabled="true">
-        </service>
--->
+        <!--    <service android:name="RingtonePlayingService"
+                android:enabled="true">
+            </service>
+    -->
 
 
     </application>
 
+    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
